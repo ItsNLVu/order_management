@@ -12,3 +12,7 @@ class TestOrderItem(FrappeTestCase):
 		for rate in (0, -1):
 			with self.subTest(rate=rate), self.assertRaises(OrderRuleError):
 				make_item(default_rate=rate)
+
+	def test_default_rate_must_fit_the_database(self):
+		with self.assertRaises(OrderRuleError):
+			make_item(default_rate=10**13)

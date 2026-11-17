@@ -35,8 +35,11 @@ def make_item(default_rate: float = 100_000, **values) -> str:
 
 
 def make_order(qty: int = 2, rate: float = 100_000, **values):
-	values.setdefault("customer", make_customer())
-	values.setdefault("item", make_item(default_rate=rate if rate and rate > 0 else 100_000))
+	# Build masters only when the test did not pass its own (setdefault would build them anyway)
+	if "customer" not in values:
+		values["customer"] = make_customer()
+	if "item" not in values:
+		values["item"] = make_item()
 	return frappe.get_doc({"doctype": DocTypes.ORDER, "qty": qty, "rate": rate, **values}).insert()
 
 

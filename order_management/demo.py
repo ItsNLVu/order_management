@@ -66,6 +66,7 @@ def create_demo_data(days: int = 10, orders_per_day: int = 3, seed: int = 7):
 
 
 REGIONAL_DEFAULTS = {
+	"language": "vi",
 	"time_zone": "Asia/Ho_Chi_Minh",
 	"currency": "VND",
 	"number_format": "#.###",
@@ -77,7 +78,6 @@ def set_regional_defaults():
 	"""Vietnam time zone and VND formatting for the demo site."""
 	settings = frappe.get_single("System Settings")
 	settings.update(REGIONAL_DEFAULTS)
-	settings.language = settings.language or "en"  # empty only when the setup wizard was skipped
 	settings.save(ignore_permissions=True)
 	for key, value in REGIONAL_DEFAULTS.items():  # what the client reads at boot
 		frappe.db.set_default(key, value)

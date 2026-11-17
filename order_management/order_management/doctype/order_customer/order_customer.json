@@ -50,7 +50,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-17 19:13:24.259896",
+ "modified": "2026-11-17 19:54:52.062475",
  "modified_by": "Administrator",
  "module": "Order Management",
  "name": "Order Customer",
@@ -82,16 +82,10 @@
    "write": 1
   },
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Order User",
-   "share": 1,
-   "write": 1
+   "role": "Order User"
   }
  ],
  "row_format": "Dynamic",

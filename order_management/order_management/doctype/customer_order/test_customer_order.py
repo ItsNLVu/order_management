@@ -40,6 +40,23 @@ class TestCustomerOrder(FrappeTestCase):
 			with self.subTest(**values), self.assertRaises(OrderRuleError):
 				make_order(**values)
 
+	def test_rate_is_checked_after_rounding_to_the_currency(self):
+		# A rate below the smallest currency unit rounds to 0, so it must not slip through
+		with self.assertRaises(OrderRuleError):
+			make_order(rate=0.001)
+
+	def test_numbers_the_database_cannot_hold_are_rejected(self):
+		for values in ({"qty": 10**10}, {"rate": 10**13}, {"qty": 10**6, "rate": 10**7}):
+			with self.subTest(**values), self.assertRaises(OrderRuleError):
+				make_order(**values)
+
+	def test_unknown_status_is_named_in_the_error(self):
+		order = make_order()
+		order.status = "Shipped"
+		with self.assertRaises(InvalidTransitionError) as raised:
+			order.save()
+		self.assertIn("Shipped", str(raised.exception))
+
 	def test_quantity_must_be_whole(self):
 		with self.assertRaises(OrderRuleError):
 			make_order(qty=1.5)

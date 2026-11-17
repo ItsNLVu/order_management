@@ -11,6 +11,12 @@ class TestApplyAction(FrappeTestCase):
 		with self.assertRaises(frappe.ValidationError):
 			apply_action(make_order().name, "ship")
 
+	def test_missing_arguments_are_a_clear_error(self):
+		with self.assertRaises(frappe.MandatoryError):
+			apply_action(make_order().name, None)
+		with self.assertRaises(frappe.MandatoryError):
+			apply_action(None, "deliver")
+
 	def test_returns_the_updated_order(self):
 		result = apply_action(make_order().name, "deliver")
 		self.assertEqual(result["status"], OrderStatus.DELIVERED.value)

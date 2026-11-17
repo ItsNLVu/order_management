@@ -39,30 +39,20 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-11-17 19:38:35.145881",
+ "modified": "2026-11-17 19:54:53.123935",
  "modified_by": "Administrator",
  "module": "Order Management",
  "name": "Order Settings",
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
    "read": 1,
    "role": "System Manager",
-   "share": 1,
    "write": 1
   },
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
    "read": 1,
    "role": "Order Manager",
-   "share": 1,
    "write": 1
   }
  ],

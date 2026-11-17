@@ -10,7 +10,7 @@ of saving (form, REST API, data import, apply_action) goes through the same rule
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import now_datetime
+from frappe.utils import cint, flt, now_datetime
 
 from order_management.order_management.constants import DocTypes, OrderStatus
 from order_management.order_management.exceptions import OrderLockedError, OrderRuleError, raise_rule
@@ -59,9 +59,11 @@ class CustomerOrder(Document):
 
 		self.validate_links_active()
 		self.set_rate()
-		validators.ensure_whole_number(self, "qty")
+		self.normalize_numbers()
+		validators.ensure_within_limits(self, "qty", "rate")
 		validators.ensure_positive(self, "qty", "rate")
 		self.amount = compute_amount(self.qty, self.rate, self.precision("amount"))
+		validators.ensure_within_limits(self, "amount")
 
 		if before and before.status != self.status:
 			self.apply_transition(before)
@@ -89,6 +91,16 @@ class CustomerOrder(Document):
 		"""When Order Settings forbid changing the rate, it always comes from the item."""
 		if self.item and not get_settings().allow_rate_override:
 			self.rate = frappe.get_cached_value(DocTypes.ITEM, self.item, "default_rate")
+
+	def normalize_numbers(self):
+		"""Store what the user will see: a whole quantity and a rate rounded like the currency.
+
+		Rounding first means a rate such as 0.1 VND is checked as 0 and rejected, instead of
+		passing the check and producing an amount of 0.
+		"""
+		validators.ensure_whole_number(self, "qty")
+		self.qty = cint(self.qty)
+		self.rate = flt(self.rate, self.precision("rate"))
 
 	def apply_transition(self, before):
 		transition = status_machine.get_transition(before.status, self.status, frappe.get_roles())

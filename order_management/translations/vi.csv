@@ -73,3 +73,6 @@ How many days the Daily Revenue report shows when it opens.,Số ngày báo cáo
 Orders to Deliver,Đơn chờ giao
 All Orders,Tất cả đơn hàng
 Go Back,Quay lại
+{0} is too large. The largest allowed value is {1}.,{0} quá lớn. Giá trị lớn nhất cho phép là {1}.
+{0} is not a valid status.,{0} không phải trạng thái hợp lệ.
+Both order and action are required.,Cần có mã đơn và hành động.

@@ -100,6 +100,8 @@ def get_action_transition(action: str, status: str) -> Transition:
 
 def get_transition(source: str, target: str, roles: list[str] | set[str]) -> Transition:
 	"""Return the transition from source to target, or raise if it does not exist or is not allowed."""
+	if target not in {status.value for status in OrderStatus}:
+		raise_rule(InvalidTransitionError, _("{0} is not a valid status.").format(repr(target)))
 	transition = next((t for t in TRANSITIONS.values() if source in t.sources and t.target == target), None)
 	if not transition:
 		raise_rule(
