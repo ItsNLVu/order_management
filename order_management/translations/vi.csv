@@ -61,7 +61,7 @@ Order Is Locked,Đơn hàng đã khóa
 Check the Date Range,Kiểm tra lại khoảng ngày
 Please enter a reason for this change.,Vui lòng nhập lý do.
 "You are not allowed to change status from {0} to {1}. Only {2} can do this.","Bạn không có quyền chuyển trạng thái từ {0} sang {1}. Chỉ {2} làm được việc này."
-{0} {1} is disabled. Choose another one or enable it again.,{0} {1} đã ngừng dùng. Hãy chọn cái khác hoặc bật lại trong danh mục.
+{0} {1} is disabled. Choose another one or enable it again.,{0} {1} đã ngừng dùng. Hãy chọn mục khác hoặc bật lại trong danh mục.
 After this the order can no longer be changed.,Sau bước này đơn hàng không sửa được nữa.
 Change order {0} to {1}?,Chuyển đơn {0} sang {1}?
 No delivered orders were created between {0} and {1}.,Không có đơn đã giao nào được tạo từ {0} đến {1}.
