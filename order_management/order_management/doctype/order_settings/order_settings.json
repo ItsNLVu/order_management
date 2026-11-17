@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "creation": "2026-11-17 17:37:38.349432",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "require_cancel_reason",
+  "allow_rate_override",
+  "report_default_days"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "require_cancel_reason",
+   "fieldtype": "Check",
+   "label": "Require a Reason to Cancel"
+  },
+  {
+   "default": "1",
+   "description": "When off, the rate always comes from the item.",
+   "fieldname": "allow_rate_override",
+   "fieldtype": "Check",
+   "label": "Allow Changing the Rate on Orders"
+  },
+  {
+   "default": "30",
+   "fieldname": "report_default_days",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Default Report Range (Days)",
+   "non_negative": 1,
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-11-17 17:37:38.349432",
+ "modified_by": "Administrator",
+ "module": "Order Management",
+ "name": "Order Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Order Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
