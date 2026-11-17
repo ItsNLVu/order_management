@@ -50,6 +50,11 @@ class TestCustomerOrder(FrappeTestCase):
 		with self.assertRaises(OrderRuleError):
 			make_order(item=make_item(disabled=1))
 
+	def test_missing_customer_or_item_is_a_mandatory_error(self):
+		for field in ("customer", "item"):
+			with self.subTest(field=field), self.assertRaises(frappe.MandatoryError):
+				make_order(**{field: None})
+
 	def test_open_order_stays_usable_after_its_customer_is_disabled(self):
 		order = make_order()
 		frappe.db.set_value(DocTypes.CUSTOMER, order.customer, "disabled", 1)

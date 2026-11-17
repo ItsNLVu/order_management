@@ -78,8 +78,9 @@ class CustomerOrder(Document):
 
 	def validate_links_active(self):
 		for fieldname, doctype in (("customer", DocTypes.CUSTOMER), ("item", DocTypes.ITEM)):
-			if self.is_new() or self.has_value_changed(fieldname):
-				name = self.get(fieldname)
+			name = self.get(fieldname)
+			# An empty link is reported by Frappe's own mandatory check after validate
+			if name and (self.is_new() or self.has_value_changed(fieldname)):
 				title_field = frappe.get_meta(doctype).title_field
 				disabled, title = frappe.get_cached_value(doctype, name, ["disabled", title_field])
 				validators.ensure_active(doctype, title or name, disabled)
