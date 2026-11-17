@@ -1,0 +1,59 @@
+Order Management,Quản lý đơn hàng
+Customer Order,Đơn hàng
+Order Customer,Khách hàng
+Order Item,Mặt hàng
+Order Settings,Cài đặt đơn hàng
+Daily Revenue,Doanh thu theo ngày
+Order User,Nhân viên bán hàng
+Order Manager,Quản lý bán hàng
+Orders,Đơn hàng
+Masters,Danh mục
+Setup,Thiết lập
+Series,Mẫu đánh số
+Customer Name,Tên khách hàng
+Phone,Số điện thoại
+Disabled,Ngừng dùng
+Item Name,Tên mặt hàng
+Default Rate,Đơn giá mặc định
+Customer,Khách hàng
+Item,Mặt hàng
+Status,Trạng thái
+Quantity,Số lượng
+Rate,Đơn giá
+Amount,Thành tiền
+Status History,Lịch sử trạng thái
+Delivered At,Thời điểm giao
+Delivered By,Người giao
+Cancelled At,Thời điểm hủy
+Cancelled By,Người hủy
+Cancellation Reason,Lý do hủy
+New,Mới
+Delivered,Đã giao
+Cancelled,Hủy
+Mark as Delivered,Giao hàng
+Cancel Order,Hủy đơn
+Reason,Lý do
+Confirm,Xác nhận
+Require a Reason to Cancel,Bắt buộc nhập lý do khi hủy
+Allow Changing the Rate on Orders,Cho sửa đơn giá trên đơn hàng
+"When off, the rate always comes from the item.","Khi tắt, đơn giá luôn lấy từ mặt hàng."
+Default Report Range (Days),Số ngày mặc định của báo cáo
+Date,Ngày
+Delivered Orders,Số đơn đã giao
+Total Amount,Tổng thành tiền
+From Date,Từ ngày
+To Date,Đến ngày
+Cannot change status from {0} to {1}.,Không thể chuyển trạng thái từ {0} sang {1}.
+You are not allowed to change status from {0} to {1}.,Bạn không có quyền chuyển trạng thái từ {0} sang {1}.
+{0} must be greater than 0.,{0} phải lớn hơn 0.
+{0} must be a whole number.,{0} phải là số nguyên.
+{0} {1} is disabled.,{0} {1} đã ngừng dùng.
+These fields cannot be changed: {0}.,Không được sửa các trường: {0}.
+This order is {0} and can no longer be changed.,"Đơn hàng đã ở trạng thái {0}, không thể thay đổi nữa."
+Changed: {0}.,Trường bị sửa: {0}.
+Only orders in status {0} can be deleted.,Chỉ xóa được đơn hàng ở trạng thái {0}.
+Please enter a reason.,Vui lòng nhập lý do.
+Unknown action: {0},Hành động không hợp lệ: {0}
+From Date must be on or before To Date.,Từ ngày phải trước hoặc bằng Đến ngày.
+{0} is not possible for an order in status {1}.,"Không thể thực hiện ""{0}"" khi đơn hàng đang ở trạng thái {1}."
+Quantity and Price,Số lượng và giá
