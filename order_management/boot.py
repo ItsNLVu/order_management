@@ -3,7 +3,6 @@ from order_management.order_management.services.status_machine import STATUS_COL
 
 
 def boot_session(bootinfo):
-	"""Metadata the client reads instead of hardcoding statuses, colours or settings."""
 	settings = get_settings()
 	bootinfo.order_management = {
 		"status_colors": {status.value: color for status, color in STATUS_COLORS.items()},

@@ -1,8 +1,7 @@
 // Copyright (c) 2026, Nguyen Long Vu and contributors
 // For license information, please see license.txt
 
-// The form only draws what the server allows. Amount here is a preview: the server
-// recalculates it on save, and every rule is checked again there.
+// Amount here is a preview; the server recalculates it on save.
 
 frappe.ui.form.on("Customer Order", {
 	setup(frm) {
@@ -37,8 +36,7 @@ function update_amount_preview(frm) {
 	frm.set_value("amount", flt(frm.doc.qty) * flt(frm.doc.rate));
 }
 
-// Every time in this app is Vietnam time, so Frappe's timezone note under each value adds nothing.
-// The note is written into the description, so it is cleared along with setting the flag.
+// All times are Vietnam time. Frappe writes the timezone into the description, so clear both.
 function hide_timezone_notes(frm) {
 	for (const df of frm.meta.fields.filter((df) => df.fieldtype === "Datetime")) {
 		frm.set_df_property(df.fieldname, "hide_timezone", 1);
@@ -48,12 +46,10 @@ function hide_timezone_notes(frm) {
 
 function lock_form(frm) {
 	frm.disable_save();
-	// set_read_only() only changes permissions in memory; marking each field read-only
-	// also redraws the inputs, so nothing on a locked order can be typed into.
+	// frm.set_read_only() does not redraw the inputs, so mark each field instead
 	for (const df of frm.meta.fields) {
 		if (frappe.model.no_value_type.includes(df.fieldtype)) continue;
 		frm.set_df_property(df.fieldname, "read_only", 1);
-		// Help text explains how to fill a field; a locked order has nothing left to fill
 		if (df.description) frm.set_df_property(df.fieldname, "description", "");
 	}
 	frm.set_intro(__("This order is {0} and can no longer be changed.", [__(frm.doc.status)]));
@@ -67,8 +63,6 @@ function add_action_buttons(frm) {
 	}
 }
 
-// One dialog per status change: it names the change, warns when it cannot be undone,
-// asks for a reason when the action needs one, and its button repeats the action.
 function run_action(frm, { action, label, target, requires_reason, is_final }) {
 	const message = [__("Change order {0} to {1}?", [frm.doc.name, __(target)])];
 	if (is_final) message.push(__("After this the order can no longer be changed."));

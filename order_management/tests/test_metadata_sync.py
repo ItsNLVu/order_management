@@ -1,4 +1,4 @@
-"""Guards for the few places Frappe makes us repeat a value declared in Python."""
+"""Frappe makes us repeat some Python values in JSON; these tests keep them in sync."""
 
 import csv
 import os

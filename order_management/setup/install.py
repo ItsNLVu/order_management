@@ -24,7 +24,7 @@ def ensure_roles():
 
 
 def ensure_default_settings():
-	"""Store the defaults declared in the Order Settings DocType, so they live in one place."""
+	# Defaults come from the DocType JSON
 	settings = frappe.get_single(DocTypes.SETTINGS)
 	for df in settings.meta.fields:
 		if df.default is not None and frappe.db.get_single_value(DocTypes.SETTINGS, df.fieldname) is None:

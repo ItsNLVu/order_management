@@ -1,8 +1,4 @@
-"""Order status rules as data.
-
-Every allowed status change is one row in TRANSITIONS. The controller, the API and the
-form buttons all read this table, so adding a status or an action happens here.
-"""
+"""Allowed status changes. The controller, the API and the form buttons all read TRANSITIONS."""
 
 from dataclasses import dataclass
 
@@ -19,13 +15,13 @@ from order_management.order_management.exceptions import (
 @dataclass(frozen=True)
 class Transition:
 	action: OrderAction
-	label: str  # English source text, translated where it is shown
+	label: str  # English source, translated in the UI
 	sources: frozenset[OrderStatus]
 	target: OrderStatus
 	roles: frozenset[Role]
-	at_field: str  # set to the time of the change
-	by_field: str  # set to the user who made the change
-	reason_field: str | None = None  # holds the reason, when the action takes one
+	at_field: str
+	by_field: str
+	reason_field: str | None = None
 	reason_setting: str | None = None  # Order Settings flag that makes the reason mandatory
 
 
@@ -52,7 +48,6 @@ TRANSITIONS: dict[OrderAction, Transition] = {
 	),
 }
 
-# Indicator colour of each status in list and form views.
 STATUS_COLORS: dict[OrderStatus, str] = {
 	OrderStatus.NEW: "blue",
 	OrderStatus.DELIVERED: "green",
@@ -80,12 +75,10 @@ def _allowed_for(transition: Transition, roles: list[str] | set[str]) -> bool:
 
 
 def allowed_transitions(status: str, roles: list[str] | set[str]) -> list[Transition]:
-	"""Transitions the given roles may apply to an order in this status."""
 	return [t for t in TRANSITIONS.values() if status in t.sources and _allowed_for(t, roles)]
 
 
 def get_action_transition(action: str, status: str) -> Transition:
-	"""Return the transition behind an action, or raise if the action is unknown or not possible now."""
 	try:
 		transition = TRANSITIONS[OrderAction(action)]
 	except ValueError:
@@ -99,7 +92,6 @@ def get_action_transition(action: str, status: str) -> Transition:
 
 
 def get_transition(source: str, target: str, roles: list[str] | set[str]) -> Transition:
-	"""Return the transition from source to target, or raise if it does not exist or is not allowed."""
 	if target not in {status.value for status in OrderStatus}:
 		raise_rule(InvalidTransitionError, _("{0} is not a valid status.").format(repr(target)))
 	transition = next((t for t in TRANSITIONS.values() if source in t.sources and t.target == target), None)

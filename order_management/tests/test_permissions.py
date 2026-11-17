@@ -6,8 +6,6 @@ from order_management.tests.factories import as_user, ensure_test_user
 
 
 class TestPermissions(FrappeTestCase):
-	"""Who may do what, checked against the permission engine rather than the form."""
-
 	def assertRights(self, doctype, role, expected):
 		user = ensure_test_user(role)
 		for right, allowed in expected.items():

@@ -1,12 +1,6 @@
 # Copyright (c) 2026, Nguyen Long Vu and contributors
 # For license information, please see license.txt
 
-"""Customer Order controller.
-
-Thin on purpose: it calls the services in the order Frappe runs its hooks, so every way
-of saving (form, REST API, data import, apply_action) goes through the same rules.
-"""
-
 import frappe
 from frappe import _
 from frappe.model.document import Document
@@ -31,7 +25,6 @@ class CustomerOrder(Document):
 					"label": t.label,
 					"target": t.target.value,
 					"requires_reason": self._reason_required(t),
-					# A change into a final status cannot be undone, so the form asks first
 					"is_final": status_machine.is_final(t.target.value),
 				}
 				for t in status_machine.allowed_transitions(self.status, roles)
@@ -39,7 +32,7 @@ class CustomerOrder(Document):
 		)
 
 	def before_insert(self):
-		# A new order always starts as New, whatever the client sent.
+		# Ignore any status or stamps sent by the client
 		self.status = OrderStatus.NEW.value
 		for fieldname in status_machine.transition_fields():
 			self.set(fieldname, None)
@@ -68,7 +61,7 @@ class CustomerOrder(Document):
 		if before and before.status != self.status:
 			self.apply_transition(before)
 		elif before:
-			# Outside a transition, the fields a transition owns stay as they are.
+			# Only a transition may set these fields
 			validators.ensure_unchanged(self, before, status_machine.transition_fields())
 
 	def on_trash(self):
@@ -81,23 +74,18 @@ class CustomerOrder(Document):
 	def validate_links_active(self):
 		for fieldname, doctype in (("customer", DocTypes.CUSTOMER), ("item", DocTypes.ITEM)):
 			name = self.get(fieldname)
-			# An empty link is reported by Frappe's own mandatory check after validate
+			# Empty links are reported by Frappe's mandatory check
 			if name and (self.is_new() or self.has_value_changed(fieldname)):
 				title_field = frappe.get_meta(doctype).title_field
 				disabled, title = frappe.get_cached_value(doctype, name, ["disabled", title_field])
 				validators.ensure_active(doctype, title or name, disabled)
 
 	def set_rate(self):
-		"""When Order Settings forbid changing the rate, it always comes from the item."""
 		if self.item and not get_settings().allow_rate_override:
 			self.rate = frappe.get_cached_value(DocTypes.ITEM, self.item, "default_rate")
 
 	def normalize_numbers(self):
-		"""Store what the user will see: a whole quantity and a rate rounded like the currency.
-
-		Rounding first means a rate such as 0.1 VND is checked as 0 and rejected, instead of
-		passing the check and producing an amount of 0.
-		"""
+		# Round the rate first, so 0.1 VND fails the > 0 check instead of giving a 0 amount
 		validators.ensure_whole_number(self, "qty")
 		self.qty = cint(self.qty)
 		self.rate = flt(self.rate, self.precision("rate"))
@@ -125,5 +113,5 @@ class CustomerOrder(Document):
 
 
 def on_doctype_update():
-	# The daily revenue report filters by status and a creation date range.
+	# Used by the Daily Revenue report
 	frappe.db.add_index(DocTypes.ORDER, ["status", "creation"])

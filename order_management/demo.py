@@ -1,8 +1,4 @@
-"""Demo data for reviewers: two users (one per role), a few customers and items, and orders
-spread over the last days so the daily revenue report has something to show.
-
-	bench --site <site> execute order_management.demo.create_demo_data
-"""
+"""bench --site <site> execute order_management.demo.create_demo_data"""
 
 import random
 
@@ -53,7 +49,7 @@ def create_demo_data(days: int = 10, orders_per_day: int = 3, seed: int = 7):
 					"qty": rng.randint(1, 5),
 				}
 			).insert()
-			# Backdate so the report shows several days. Status changes still go through the rules.
+			# Backdate so the report spans several days
 			frappe.db.set_value(DocTypes.ORDER, order.name, "creation", created, update_modified=False)
 			outcome = rng.random()
 			if day > 0 and outcome < 0.7:
@@ -75,7 +71,6 @@ REGIONAL_DEFAULTS = {
 
 
 def set_regional_defaults():
-	"""Vietnam time zone and VND formatting for the demo site."""
 	settings = frappe.get_single("System Settings")
 	settings.update(REGIONAL_DEFAULTS)
 	settings.save(ignore_permissions=True)
@@ -97,7 +92,7 @@ def ensure_user(email: str, first_name: str, role: Role):
 		).insert(ignore_permissions=True)
 	from frappe.utils.password import update_password
 
-	# Vietnamese UI and local time also for users created by an earlier run
+	# Also updates users created by an earlier run
 	frappe.db.set_value("User", email, {"language": "vi", "time_zone": REGIONAL_DEFAULTS["time_zone"]})
 	update_password(email, DEMO_PASSWORD)
 

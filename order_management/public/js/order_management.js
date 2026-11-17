@@ -1,5 +1,4 @@
-// Client helpers shared by the order form, list view and report.
-// Status colours and settings come from the server at boot (order_management/boot.py).
+// Shared by the order form, list view and report. Colours and settings come from boot.py.
 
 frappe.provide("order_management");
 

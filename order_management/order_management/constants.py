@@ -1,5 +1,3 @@
-"""Codes shared by the whole app. Display text lives in translations, never here."""
-
 from enum import Enum
 
 

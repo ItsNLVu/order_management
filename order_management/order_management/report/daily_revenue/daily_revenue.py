@@ -1,12 +1,6 @@
 # Copyright (c) 2026, Nguyen Long Vu and contributors
 # For license information, please see license.txt
 
-"""Daily revenue: one row per creation date with the number and total of delivered orders.
-
-Aggregation runs in SQL. The date filter is a half-open range on `creation`
-(from 00:00 up to the day after `to_date`), so the (status, creation) index can be used.
-"""
-
 import frappe
 from frappe import _
 from frappe.query_builder.functions import Count, Date, Sum
@@ -50,6 +44,7 @@ def get_data(from_date, to_date):
 			Sum(order.amount).as_("total_amount"),
 		)
 		.where(order.status == OrderStatus.DELIVERED.value)
+		# Half-open range so the (status, creation) index is used
 		.where(order.creation >= from_date)
 		.where(order.creation < add_days(to_date, 1))
 		.groupby(order_date)
@@ -58,7 +53,6 @@ def get_data(from_date, to_date):
 
 
 def get_empty_message(data, from_date, to_date):
-	"""Say why the report is empty and what fills it, instead of a bare 'no data'."""
 	if data:
 		return None
 	return (
@@ -71,17 +65,16 @@ def get_empty_message(data, from_date, to_date):
 
 
 def get_chart(data):
-	"""Bars of the same totals as the table. Green because only Delivered orders count."""
 	if not data:
 		return None
 	return {
 		"data": {
-			# Day and month only, so labels fit under each bar; the table has the full date
+			# dd-MM fits under each bar
 			"labels": [formatdate(row.order_date, "dd-MM") for row in data],
 			"datasets": [{"name": _("Total Amount"), "values": [row.total_amount for row in data]}],
 		},
 		"type": "bar",
 		"fieldtype": "Currency",
-		"colors": [STATUS_COLORS[OrderStatus.DELIVERED]],
+		"colors": [STATUS_COLORS[OrderStatus.DELIVERED]],  # only Delivered orders are counted
 		"barOptions": {"spaceRatio": 0.4},
 	}

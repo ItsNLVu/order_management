@@ -28,14 +28,14 @@ class TestDailyRevenue(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()
-		# Day 1: two delivered orders, the second one second before midnight
+		# Day 1: two delivered, the second at 23:59:59
 		order_created_at(datetime(2020, 1, 1, 8, 0), OrderAction.DELIVER, qty=2)
 		order_created_at(datetime(2020, 1, 1, 23, 59, 59), OrderAction.DELIVER, qty=1)
-		# Day 2: one delivered at midnight, plus orders that must not count
+		# Day 2: one delivered at 00:00, one cancelled, one new
 		order_created_at(datetime(2020, 1, 2, 0, 0, 0), OrderAction.DELIVER, qty=5)
 		order_created_at(datetime(2020, 1, 2, 9, 0), OrderAction.CANCEL)
 		order_created_at(datetime(2020, 1, 2, 10, 0))
-		# Day 4 delivered; day 3 has nothing
+		# Day 3 is empty
 		order_created_at(datetime(2020, 1, 4, 12, 0), OrderAction.DELIVER, qty=1)
 
 	def test_groups_delivered_orders_by_creation_date(self):

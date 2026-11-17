@@ -1,5 +1,3 @@
-"""Reusable checks. Each one stops the save with a translated message when its rule is broken."""
-
 import frappe
 from frappe import _
 from frappe.model import numeric_fieldtypes
@@ -26,7 +24,7 @@ def ensure_whole_number(doc, *fieldnames: str) -> None:
 
 
 def _column_limit(fieldtype: str) -> float | None:
-	"""Largest value the database column of this field type can hold, read from Frappe's type map."""
+	# From Frappe's type map, e.g. Currency is decimal(21,9)
 	db_type, length = frappe.db.type_map.get(fieldtype, (None, None))
 	if db_type == "decimal":
 		digits, scale = (int(part) for part in length.split(","))
@@ -37,7 +35,6 @@ def _column_limit(fieldtype: str) -> float | None:
 
 
 def ensure_within_limits(doc, *fieldnames: str) -> None:
-	"""Reject numbers the database cannot store, before the write fails with a server error."""
 	for fieldname in fieldnames:
 		df = doc.meta.get_field(fieldname)
 		limit = _column_limit(df.fieldtype)
@@ -63,7 +60,7 @@ def _normalize(df, value):
 
 
 def changed_fields(doc, before, fieldnames: set[str] | None = None) -> list[str]:
-	"""Fields whose value differs from the saved version, compared by field type."""
+	# Compared by field type, so 1 and "1" are equal
 	changed = []
 	for df in doc.meta.fields:
 		if fieldnames is not None and df.fieldname not in fieldnames:

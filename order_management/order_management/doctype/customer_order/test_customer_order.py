@@ -24,8 +24,6 @@ from order_management.tests.factories import (
 
 
 class TestCustomerOrder(FrappeTestCase):
-	# Amount and server-side checks
-
 	def test_amount_is_computed_on_server(self):
 		order = make_order(qty=3, rate=1_000, amount=1)
 		self.assertEqual(order.amount, 3_000)
@@ -41,7 +39,7 @@ class TestCustomerOrder(FrappeTestCase):
 				make_order(**values)
 
 	def test_rate_is_checked_after_rounding_to_the_currency(self):
-		# A rate below the smallest currency unit rounds to 0, so it must not slip through
+		# 0.001 rounds to 0 at currency precision
 		with self.assertRaises(OrderRuleError):
 			make_order(rate=0.001)
 
@@ -83,8 +81,6 @@ class TestCustomerOrder(FrappeTestCase):
 			order = make_order(item=item, qty=2, rate=1)
 		self.assertEqual(order.rate, 50_000)
 		self.assertEqual(order.amount, 100_000)
-
-	# Status
 
 	def test_new_order_always_starts_as_new(self):
 		order = make_order(status=OrderStatus.DELIVERED.value, delivered_at=now_datetime())
@@ -148,8 +144,6 @@ class TestCustomerOrder(FrappeTestCase):
 		order = make_order()
 		frappe.delete_doc(DocTypes.ORDER, order.name)
 		self.assertFalse(frappe.db.exists(DocTypes.ORDER, order.name))
-
-	# Roles
 
 	def test_order_user_cannot_deliver_or_cancel(self):
 		order = make_order()
