@@ -39,26 +39,45 @@ function update_amount_preview(frm) {
 function lock_form(frm) {
 	frm.disable_save();
 	frm.set_read_only();
+	// Help text explains how to fill a field; a locked order has nothing left to fill
+	for (const df of frm.meta.fields.filter((df) => df.description)) {
+		frm.set_df_property(df.fieldname, "description", "");
+	}
 	frm.set_intro(__("This order is {0} and can no longer be changed.", [__(frm.doc.status)]));
 }
 
 function add_action_buttons(frm) {
 	if (frm.is_new() || frm.is_dirty()) return;
 
-	for (const { action, label, requires_reason } of frm.doc.__onload?.allowed_actions || []) {
-		frm.add_custom_button(__(label), () =>
-			requires_reason
-				? ask_reason(frm, action, label)
-				: order_management.apply_action(frm, action)
-		);
+	for (const action of frm.doc.__onload?.allowed_actions || []) {
+		frm.add_custom_button(__(action.label), () => run_action(frm, action));
 	}
 }
 
-function ask_reason(frm, action, label) {
-	frappe.prompt(
-		{ fieldname: "reason", fieldtype: "Small Text", label: __("Reason"), reqd: 1 },
-		({ reason }) => order_management.apply_action(frm, action, reason),
-		__(label),
-		__("Confirm")
-	);
+// One dialog per status change: it names the change, warns when it cannot be undone,
+// asks for a reason when the action needs one, and its button repeats the action.
+function run_action(frm, { action, label, target, requires_reason, is_final }) {
+	const message = [__("Change order {0} to {1}?", [frm.doc.name, __(target)])];
+	if (is_final) message.push(__("After this the order can no longer be changed."));
+
+	const dialog = new frappe.ui.Dialog({
+		title: __(label),
+		fields: [
+			{
+				fieldtype: "HTML",
+				options: `<p>${frappe.utils.escape_html(message.join(" "))}</p>`,
+			},
+			...(requires_reason
+				? [{ fieldname: "reason", fieldtype: "Small Text", label: __("Reason"), reqd: 1 }]
+				: []),
+		],
+		primary_action_label: __(label),
+		primary_action: ({ reason }) => {
+			dialog.hide();
+			order_management.apply_action(frm, action, reason);
+		},
+		secondary_action_label: __("Go Back"),
+		secondary_action: () => dialog.hide(),
+	});
+	dialog.show();
 }

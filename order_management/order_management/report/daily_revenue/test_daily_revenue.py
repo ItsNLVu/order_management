@@ -2,6 +2,7 @@ from datetime import date, datetime
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
+from frappe.utils import formatdate
 
 from order_management.order_management.constants import OrderAction
 from order_management.order_management.report.daily_revenue.daily_revenue import execute
@@ -48,8 +49,16 @@ class TestDailyRevenue(FrappeTestCase):
 		self.assertEqual([r.order_date for r in rows(DAY_2, DAY_2)], [DAY_2])
 		self.assertEqual([r.order_date for r in rows(DAY_1, DAY_1)], [DAY_1])
 
-	def test_empty_range_returns_no_rows(self):
-		self.assertEqual(rows(date(2020, 1, 3), date(2020, 1, 3)), [])
+	def test_empty_range_explains_why(self):
+		_columns, data, message, chart = execute({"from_date": "2020-01-03", "to_date": "2020-01-03"})
+		self.assertEqual(data, [])
+		self.assertIsNone(chart)
+		self.assertIn(formatdate("2020-01-03"), message)
+
+	def test_chart_matches_the_table(self):
+		_columns, data, message, chart = execute({"from_date": "2020-01-01", "to_date": "2020-01-04"})
+		self.assertIsNone(message)
+		self.assertEqual(chart["data"]["datasets"][0]["values"], [row.total_amount for row in data])
 
 	def test_from_date_after_to_date_is_rejected(self):
 		with self.assertRaises(frappe.ValidationError):

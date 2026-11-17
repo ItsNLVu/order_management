@@ -91,13 +91,14 @@ def ensure_user(email: str, first_name: str, role: Role):
 				"doctype": "User",
 				"email": email,
 				"first_name": first_name,
-				"language": "vi",
 				"send_welcome_email": 0,
 				"roles": [{"role": role.value}],
 			}
 		).insert(ignore_permissions=True)
 	from frappe.utils.password import update_password
 
+	# Vietnamese UI and local time also for users created by an earlier run
+	frappe.db.set_value("User", email, {"language": "vi", "time_zone": REGIONAL_DEFAULTS["time_zone"]})
 	update_password(email, DEMO_PASSWORD)
 
 

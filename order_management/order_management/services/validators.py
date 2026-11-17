@@ -1,11 +1,11 @@
-"""Reusable checks. Each one raises with a translated message when the rule is broken."""
+"""Reusable checks. Each one stops the save with a translated message when its rule is broken."""
 
 import frappe
 from frappe import _
 from frappe.model import numeric_fieldtypes
 from frappe.utils import cint, cstr, flt
 
-from order_management.order_management.exceptions import OrderLockedError, OrderRuleError
+from order_management.order_management.exceptions import OrderLockedError, OrderRuleError, raise_rule
 
 
 def _label(doc, fieldname: str) -> str:
@@ -15,19 +15,22 @@ def _label(doc, fieldname: str) -> str:
 def ensure_positive(doc, *fieldnames: str) -> None:
 	for fieldname in fieldnames:
 		if flt(doc.get(fieldname)) <= 0:
-			frappe.throw(_("{0} must be greater than 0.").format(_label(doc, fieldname)), exc=OrderRuleError)
+			raise_rule(OrderRuleError, _("{0} must be greater than 0.").format(_label(doc, fieldname)))
 
 
 def ensure_whole_number(doc, *fieldnames: str) -> None:
 	for fieldname in fieldnames:
 		value = flt(doc.get(fieldname))
 		if value != cint(value):
-			frappe.throw(_("{0} must be a whole number.").format(_label(doc, fieldname)), exc=OrderRuleError)
+			raise_rule(OrderRuleError, _("{0} must be a whole number.").format(_label(doc, fieldname)))
 
 
-def ensure_active(doctype: str, name: str, is_disabled: bool) -> None:
+def ensure_active(doctype: str, title: str, is_disabled: bool) -> None:
 	if is_disabled:
-		frappe.throw(_("{0} {1} is disabled.").format(_(doctype), name), exc=OrderRuleError)
+		raise_rule(
+			OrderRuleError,
+			_("{0} {1} is disabled. Choose another one or enable it again.").format(_(doctype), title),
+		)
 
 
 def _normalize(df, value):
@@ -51,6 +54,4 @@ def ensure_unchanged(doc, before, fieldnames: set[str] | None = None, message: s
 	changed = changed_fields(doc, before, fieldnames)
 	if changed:
 		labels = ", ".join(_label(doc, f) for f in changed)
-		frappe.throw(
-			(message or _("These fields cannot be changed: {0}.")).format(labels), exc=OrderLockedError
-		)
+		raise_rule(OrderLockedError, (message or _("These fields cannot be changed: {0}.")).format(labels))

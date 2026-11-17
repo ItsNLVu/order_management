@@ -12,6 +12,7 @@
  "fields": [
   {
    "default": "1",
+   "description": "When on, whoever cancels an order must write why.",
    "fieldname": "require_cancel_reason",
    "fieldtype": "Check",
    "label": "Require a Reason to Cancel"
@@ -25,6 +26,7 @@
   },
   {
    "default": "30",
+   "description": "How many days the Daily Revenue report shows when it opens.",
    "fieldname": "report_default_days",
    "fieldtype": "Int",
    "in_list_view": 1,
@@ -37,7 +39,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-11-17 17:37:38.349432",
+ "modified": "2026-11-17 19:38:35.145881",
  "modified_by": "Administrator",
  "module": "Order Management",
  "name": "Order Settings",

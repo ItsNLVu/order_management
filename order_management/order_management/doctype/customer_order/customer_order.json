@@ -81,12 +81,12 @@
    "default": "1",
    "fieldname": "qty",
    "fieldtype": "Int",
-   "in_list_view": 1,
    "label": "Quantity",
    "non_negative": 1,
    "reqd": 1
   },
   {
+   "description": "Filled in from the item. You can change it if Order Settings allow it.",
    "fieldname": "rate",
    "fieldtype": "Currency",
    "label": "Rate",
@@ -99,6 +99,7 @@
   },
   {
    "bold": 1,
+   "description": "Calculated on save: quantity \u00d7 rate.",
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -156,7 +157,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-17 19:16:28.811588",
+ "modified": "2026-11-17 19:38:32.635385",
  "modified_by": "Administrator",
  "module": "Order Management",
  "name": "Customer Order",

@@ -6,13 +6,13 @@ form buttons all read this table, so adding a status or an action happens here.
 
 from dataclasses import dataclass
 
-import frappe
 from frappe import _
 
 from order_management.order_management.constants import OrderAction, OrderStatus, Role
 from order_management.order_management.exceptions import (
 	InvalidTransitionError,
 	TransitionNotPermittedError,
+	raise_rule,
 )
 
 
@@ -89,11 +89,11 @@ def get_action_transition(action: str, status: str) -> Transition:
 	try:
 		transition = TRANSITIONS[OrderAction(action)]
 	except ValueError:
-		frappe.throw(_("Unknown action: {0}").format(action), exc=InvalidTransitionError)
+		raise_rule(InvalidTransitionError, _("Unknown action: {0}").format(action))
 	if status not in transition.sources:
-		frappe.throw(
+		raise_rule(
+			InvalidTransitionError,
 			_("{0} is not possible for an order in status {1}.").format(_(transition.label), _(status)),
-			exc=InvalidTransitionError,
 		)
 	return transition
 
@@ -102,13 +102,15 @@ def get_transition(source: str, target: str, roles: list[str] | set[str]) -> Tra
 	"""Return the transition from source to target, or raise if it does not exist or is not allowed."""
 	transition = next((t for t in TRANSITIONS.values() if source in t.sources and t.target == target), None)
 	if not transition:
-		frappe.throw(
-			_("Cannot change status from {0} to {1}.").format(_(source), _(target)),
-			exc=InvalidTransitionError,
+		raise_rule(
+			InvalidTransitionError, _("Cannot change status from {0} to {1}.").format(_(source), _(target))
 		)
 	if not _allowed_for(transition, roles):
-		frappe.throw(
-			_("You are not allowed to change status from {0} to {1}.").format(_(source), _(target)),
-			exc=TransitionNotPermittedError,
+		allowed_roles = ", ".join(_(role.value) for role in sorted(transition.roles))
+		raise_rule(
+			TransitionNotPermittedError,
+			_("You are not allowed to change status from {0} to {1}. Only {2} can do this.").format(
+				_(source), _(target), allowed_roles
+			),
 		)
 	return transition

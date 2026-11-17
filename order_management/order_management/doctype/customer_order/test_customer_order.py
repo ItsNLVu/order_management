@@ -163,5 +163,14 @@ class TestCustomerOrder(FrappeTestCase):
 			self.assertEqual(order.get_onload().allowed_actions, [])
 		with as_user(Role.ORDER_MANAGER):
 			order.run_method("onload")
-			actions = {a["action"]: a["requires_reason"] for a in order.get_onload().allowed_actions}
-		self.assertEqual(actions, {OrderAction.DELIVER.value: False, OrderAction.CANCEL.value: True})
+			actions = {
+				a["action"]: (a["target"], a["requires_reason"], a["is_final"])
+				for a in order.get_onload().allowed_actions
+			}
+		self.assertEqual(
+			actions,
+			{
+				OrderAction.DELIVER.value: (OrderStatus.DELIVERED.value, False, True),
+				OrderAction.CANCEL.value: (OrderStatus.CANCELLED.value, True, True),
+			},
+		)

@@ -13,7 +13,7 @@ from frappe.model.document import Document
 from frappe.utils import now_datetime
 
 from order_management.order_management.constants import DocTypes, OrderStatus
-from order_management.order_management.exceptions import OrderLockedError, OrderRuleError
+from order_management.order_management.exceptions import OrderLockedError, OrderRuleError, raise_rule
 from order_management.order_management.services import status_machine, validators
 from order_management.order_management.services.pricing import compute_amount
 from order_management.order_management.services.settings import get_settings
@@ -29,7 +29,10 @@ class CustomerOrder(Document):
 				{
 					"action": t.action.value,
 					"label": t.label,
+					"target": t.target.value,
 					"requires_reason": self._reason_required(t),
+					# A change into a final status cannot be undone, so the form asks first
+					"is_final": status_machine.is_final(t.target.value),
 				}
 				for t in status_machine.allowed_transitions(self.status, roles)
 			],
@@ -68,16 +71,18 @@ class CustomerOrder(Document):
 
 	def on_trash(self):
 		if status_machine.is_final(self.status):
-			frappe.throw(
+			raise_rule(
+				OrderLockedError,
 				_("Only orders in status {0} can be deleted.").format(_(OrderStatus.NEW.value)),
-				exc=OrderLockedError,
 			)
 
 	def validate_links_active(self):
 		for fieldname, doctype in (("customer", DocTypes.CUSTOMER), ("item", DocTypes.ITEM)):
 			if self.is_new() or self.has_value_changed(fieldname):
-				value = self.get(fieldname)
-				validators.ensure_active(doctype, value, frappe.get_cached_value(doctype, value, "disabled"))
+				name = self.get(fieldname)
+				title_field = frappe.get_meta(doctype).title_field
+				disabled, title = frappe.get_cached_value(doctype, name, ["disabled", title_field])
+				validators.ensure_active(doctype, title or name, disabled)
 
 	def set_rate(self):
 		"""When Order Settings forbid changing the rate, it always comes from the item."""
@@ -96,7 +101,7 @@ class CustomerOrder(Document):
 		validators.ensure_unchanged(self, before, other_fields)
 
 		if self._reason_required(transition) and not (self.get(transition.reason_field) or "").strip():
-			frappe.throw(_("Please enter a reason."), exc=OrderRuleError)
+			raise_rule(OrderRuleError, _("Please enter a reason for this change."))
 
 		self.set(transition.at_field, now_datetime())
 		self.set(transition.by_field, frappe.session.user)

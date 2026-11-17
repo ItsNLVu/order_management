@@ -33,7 +33,6 @@ Cancelled,Hủy
 Mark as Delivered,Giao hàng
 Cancel Order,Hủy đơn
 Reason,Lý do
-Confirm,Xác nhận
 Require a Reason to Cancel,Bắt buộc nhập lý do khi hủy
 Allow Changing the Rate on Orders,Cho sửa đơn giá trên đơn hàng
 "When off, the rate always comes from the item.","Khi tắt, đơn giá luôn lấy từ mặt hàng."
@@ -44,16 +43,33 @@ Total Amount,Tổng thành tiền
 From Date,Từ ngày
 To Date,Đến ngày
 Cannot change status from {0} to {1}.,Không thể chuyển trạng thái từ {0} sang {1}.
-You are not allowed to change status from {0} to {1}.,Bạn không có quyền chuyển trạng thái từ {0} sang {1}.
 {0} must be greater than 0.,{0} phải lớn hơn 0.
 {0} must be a whole number.,{0} phải là số nguyên.
-{0} {1} is disabled.,{0} {1} đã ngừng dùng.
 These fields cannot be changed: {0}.,Không được sửa các trường: {0}.
 This order is {0} and can no longer be changed.,"Đơn hàng đã ở trạng thái {0}, không thể thay đổi nữa."
 Changed: {0}.,Trường bị sửa: {0}.
 Only orders in status {0} can be deleted.,Chỉ xóa được đơn hàng ở trạng thái {0}.
-Please enter a reason.,Vui lòng nhập lý do.
 Unknown action: {0},Hành động không hợp lệ: {0}
 From Date must be on or before To Date.,Từ ngày phải trước hoặc bằng Đến ngày.
 {0} is not possible for an order in status {1}.,"Không thể thực hiện ""{0}"" khi đơn hàng đang ở trạng thái {1}."
 Quantity and Price,Số lượng và giá
+New {0},{0} mới
+Cannot Save,Chưa lưu được
+Status Cannot Change,Không đổi được trạng thái
+Not Allowed,Không đủ quyền
+Order Is Locked,Đơn hàng đã khóa
+Check the Date Range,Kiểm tra lại khoảng ngày
+Please enter a reason for this change.,Vui lòng nhập lý do.
+"You are not allowed to change status from {0} to {1}. Only {2} can do this.","Bạn không có quyền chuyển trạng thái từ {0} sang {1}. Chỉ {2} làm được việc này."
+{0} {1} is disabled. Choose another one or enable it again.,{0} {1} đã ngừng dùng. Hãy chọn cái khác hoặc bật lại trong danh mục.
+After this the order can no longer be changed.,Sau bước này đơn hàng không sửa được nữa.
+Change order {0} to {1}?,Chuyển đơn {0} sang {1}?
+No delivered orders were created between {0} and {1}.,Không có đơn đã giao nào được tạo từ {0} đến {1}.
+"Choose a wider date range, or deliver an order first.","Hãy chọn khoảng ngày rộng hơn, hoặc giao một đơn trước."
+Calculated on save: quantity × rate.,Tự tính khi lưu: số lượng × đơn giá.
+Filled in from the item. You can change it if Order Settings allow it.,Tự điền từ mặt hàng. Được sửa nếu Cài đặt đơn hàng cho phép.
+"When on, whoever cancels an order must write why.","Khi bật, người hủy đơn phải ghi lý do."
+How many days the Daily Revenue report shows when it opens.,Số ngày báo cáo Doanh thu theo ngày hiển thị khi mở.
+Orders to Deliver,Đơn chờ giao
+All Orders,Tất cả đơn hàng
+Go Back,Quay lại
